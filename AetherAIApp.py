@@ -1,10 +1,9 @@
-# Gerekli kütüphaneler
 import psutil
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QLabel, QMessageBox,
     QFrame, QLineEdit, QPushButton, QWidget,
-    QVBoxLayout, QProgressBar
+    QVBoxLayout, QProgressBar, QHBoxLayout
     )
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QTimer
@@ -41,7 +40,7 @@ class controlOfCPU(QWidget):
         cpu_kullanim = psutil.cpu_percent(interval=0.1)
         self.progressBar.setValue(cpu_kullanim)
         self.label.setText(f"Anlık CPU Kullanımı: %{cpu_kullanim}")
-
+        
 class controlOfRAM(QWidget):
     def __init__(self):
         pass
@@ -63,56 +62,38 @@ class girisPenceresi(QWidget):
         layout = QVBoxLayout()
         
         self.frame_name = QFrame(self)
-        self.frame_name.setGeometry(150, 150, 120, 30)
         self.frame_name.setFrameShape(QFrame.Box)
-        
-        self.label_name = QLabel("İsminiz", self.frame_name)
-        self.label_name.move(10, 5)
-        
-        self.frame_inputName = QLabel(self)
-        self.frame_inputName.setGeometry(280, 150, 250, 30)
-        self.frame_inputName.setFrameShape(QFrame.Box)
-        
-        self.input_name = QLineEdit(self.frame_inputName)
-        self.input_name.move(5, 3)
-        self.input_name.setFixedWidth(240)
+        name_layout = QHBoxLayout()
+        name_layout.addWidget(QLabel("İsminiz"))
+        self.input_name = QLineEdit()
         self.input_name.setPlaceholderText("İsminizi buraya yazınız!!!")
-        
+        name_layout.addWidget(self.input_name)
+        self.frame_name.setLayout(name_layout)
+        layout.addWidget(self.frame_name)
+
         self.frame_lastname = QFrame(self)
-        self.frame_lastname.setGeometry(150, 200, 120, 30)
         self.frame_lastname.setFrameShape(QFrame.Box)
-        
-        self.label_lastname = QLabel("Soy isminiz", self.frame_lastname)
-        self.label_lastname.move(10, 5)
-        
-        self.frame_inputLastname = QLabel(self)
-        self.frame_inputLastname.setGeometry(280, 200, 250, 30)
-        self.frame_inputLastname.setFrameShape(QFrame.Box)
-        
-        self.input_lastname = QLineEdit(self.frame_inputLastname)
-        self.input_lastname.move(5, 3)
-        self.input_lastname.setFixedWidth(240)
+        lastname_layout = QHBoxLayout()
+        lastname_layout.addWidget(QLabel("Soy isminiz"))
+        self.input_lastname = QLineEdit()
         self.input_lastname.setPlaceholderText("Soy isminizi buraya yazınız!!!")
-        
+        lastname_layout.addWidget(self.input_lastname)
+        self.frame_lastname.setLayout(lastname_layout)
+        layout.addWidget(self.frame_lastname)
+
         self.frame_eposta = QFrame(self)
-        self.frame_eposta.setGeometry(150, 250, 120, 30)
         self.frame_eposta.setFrameShape(QFrame.Box)
-        
-        self.label_eposta = QLabel("E-postanız", self.frame_eposta)
-        self.label_eposta.move(10, 5)
-        
-        self.frame_inputEposta = QLabel(self)
-        self.frame_inputEposta.setGeometry(280, 250, 250, 30)
-        self.frame_inputEposta.setFrameShape(QFrame.Box)
-        
-        self.input_eposta = QLineEdit(self.frame_inputEposta)
-        self.input_eposta.move(5, 3)
-        self.input_eposta.setFixedWidth(240)
+        eposta_layout = QHBoxLayout()
+        eposta_layout.addWidget(QLabel("E-postanız"))
+        self.input_eposta = QLineEdit()
         self.input_eposta.setPlaceholderText("E-postanızı buraya yazınız!!!")
-        
+        eposta_layout.addWidget(self.input_eposta)
+        self.frame_eposta.setLayout(eposta_layout)
+        layout.addWidget(self.frame_eposta)
+
         self.button = QPushButton("Giriş", self)
-        self.button.setGeometry(200, 300, 300, 60)
         self.button.clicked.connect(self.girisDogulama)
+        layout.addWidget(self.button)
         
         self.setLayout(layout)
         
@@ -128,16 +109,16 @@ class girisPenceresi(QWidget):
         if bulundu:
             QMessageBox.information(self, "başarılı", "Giriş yapabilirsiniz")
             if self.parent:
-                self.parent.appMain()
+                self.parent.setAuthenticated(True)  # Bayrağı güncelle
             QTimer.singleShot(5000, self.close)
         else:
             QMessageBox.information(self, "hatalı", "E-postanız kayıtlı değil")
             QTimer.singleShot(5000, self.close)
         
-# Hesabı olmayan kullanıcının kayıt olmasını sağlayan pencere
-class kayitPencresi(QWidget):
-    def __init__(self):
-        super(kayitPencresi, self).__init__()
+class kayitPenceresi(QWidget):
+    def __init__(self, parent=None):
+        super(kayitPenceresi, self).__init__(parent)
+        self.parent = parent
         
         self.setWindowTitle("Kayıt Penceresi")
         self.setGeometry(100, 100, 150, 150)
@@ -145,57 +126,43 @@ class kayitPencresi(QWidget):
         self.initUI()
         
     def initUI(self):
+        layout = QVBoxLayout()
+        
         self.frm_name = QFrame(self)
-        self.frm_name.setGeometry(150, 150, 120, 30)
         self.frm_name.setFrameShape(QFrame.Box)
-        
-        self.lbl_name = QLabel("İsminizi giriniz", self.frm_name)
-        self.lbl_name.move(10, 5)
-        
-        self.frm_inputName = QLabel(self)
-        self.frm_inputName.setGeometry(280, 150, 250, 30)
-        self.frm_inputName.setFrameShape(QFrame.Box)
-        
-        self.inpt_name = QLineEdit(self.frm_inputName)
-        self.inpt_name.move(5, 3)
-        self.inpt_name.setFixedWidth(240)
+        name_layout = QHBoxLayout()
+        name_layout.addWidget(QLabel("İsminizi giriniz"))
+        self.inpt_name = QLineEdit()
         self.inpt_name.setPlaceholderText("İsminizi buraya giriniz!!!")
-        
+        name_layout.addWidget(self.inpt_name)
+        self.frm_name.setLayout(name_layout)
+        layout.addWidget(self.frm_name)
+
         self.frm_lastname = QFrame(self)
-        self.frm_lastname.setGeometry(150, 200, 120, 30)
         self.frm_lastname.setFrameShape(QFrame.Box)
-        
-        self.lbl_lastname = QLabel("Soy isminiz", self.frm_lastname)
-        self.lbl_lastname.move(10, 5)
-        
-        self.frm_inputLastname = QLabel(self)
-        self.frm_inputLastname.setGeometry(280, 200, 250, 30)
-        self.frm_inputLastname.setFrameShape(QFrame.Box)
-        
-        self.inpt_lastname = QLineEdit(self.frm_inputLastname)
-        self.inpt_lastname.move(5, 3)
-        self.inpt_lastname.setFixedWidth(240)
+        lastname_layout = QHBoxLayout()
+        lastname_layout.addWidget(QLabel("Soy isminiz"))
+        self.inpt_lastname = QLineEdit()
         self.inpt_lastname.setPlaceholderText("Soy isminizi buraya giriniz!!!")
-        
+        lastname_layout.addWidget(self.inpt_lastname)
+        self.frm_lastname.setLayout(lastname_layout)
+        layout.addWidget(self.frm_lastname)
+
         self.frm_eposta = QFrame(self)
-        self.frm_eposta.setGeometry(150, 250, 120, 30)
         self.frm_eposta.setFrameShape(QFrame.Box)
-        
-        self.lbl_eposta = QLabel("E-postanız", self.frm_eposta)
-        self.lbl_eposta.move(10, 5)
-        
-        self.frm_inputEposta = QLabel(self)
-        self.frm_inputEposta.setGeometry(280, 250, 250, 30)
-        self.frm_inputEposta.setFrameShape(QFrame.Box)
-        
-        self.inpt_eposta = QLineEdit(self.frm_inputEposta)
-        self.inpt_eposta.move(5, 3)
-        self.inpt_eposta.setFixedWidth(240)
+        eposta_layout = QHBoxLayout()
+        eposta_layout.addWidget(QLabel("E-postanız"))
+        self.inpt_eposta = QLineEdit()
         self.inpt_eposta.setPlaceholderText("E-postanızı buraya giriniz!!!")
-        
+        eposta_layout.addWidget(self.inpt_eposta)
+        self.frm_eposta.setLayout(eposta_layout)
+        layout.addWidget(self.frm_eposta)
+
         self.button = QPushButton("Kayıt ol", self)
-        self.button.setGeometry()
         self.button.clicked.connect(self.kayitDogrulama)
+        layout.addWidget(self.button)
+        
+        self.setLayout(layout)
         
     def kayitDogrulama(self):
         eposta = self.inpt_eposta.text()
@@ -207,13 +174,18 @@ class kayitPencresi(QWidget):
                     break   
             if bulundu:
                 QMessageBox.information(self, "kayıtlı", "E-postanız zaten kayıtlı")    
-        with open("Users.txt", "a", encoding="utf-8") as dosya:
-            dosya.write(eposta + "\n")
-            QMessageBox.information(self, "başarılı", "Kaydınız başarıyla gerçekleşti")
+            else:
+                with open("Users.txt", "a", encoding="utf-8") as dosya:
+                    dosya.write(eposta + "\n")
+                    QMessageBox.information(self, "başarılı", "Kaydınız başarıyla gerçekleşti")
+                    if self.parent:
+                        self.parent.setAuthenticated(True)  # Bayrağı güncelle
+        QTimer.singleShot(5000, self.close)
 
-class AetherAIApp(QMainWindow): # Main class
+class AetherAIApp(QMainWindow):
     def __init__(self):
         super(AetherAIApp, self).__init__()
+        self.isAuthenticated = False  # Giriş/kayıt durumu bayrağı
 
         self.setWindowTitle("Aet AI")
         self.setGeometry(200, 200, 700, 700)
@@ -222,35 +194,41 @@ class AetherAIApp(QMainWindow): # Main class
         self.initUI()
         
     def initUI(self):
-        self.central_widget = QWidget(self)
-        self.layout = QVBoxLayout()
-        
-        self.loginButton = QPushButton("Giriş yap", self)
-        self.loginButton.setIcon(QIcon("girisYap.png"))
-        self.loginButton.setGeometry(150, 350, 120, 40)
-        self.loginButton.clicked.connect(self.girisYap)
-        
-        self.signUpButton = QPushButton("Kayıt ol", self)
-        self.signUpButton.setIcon(QIcon("kayitOL.png"))
-        self.signUpButton.setGeometry(300, 350, 120, 40)
-        self.signUpButton.clicked.connect(self.kayitOl)
-        
-        self.layout.addWidget(self.loginButton)
-        self.layout.addWidget(self.signUpButton)
-        self.central_widget.setLayout(self.layout)
-        self.setCentralWidget(self.central_widget)
+        if self.centralWidget():
+            self.centralWidget().deleteLater()
+            
+        if self.isAuthenticated:
+            self.appMain()
+        else:
+            self.central_widget = QWidget(self)
+            self.layout = QVBoxLayout()
+            
+            self.loginButton = QPushButton("Giriş yap", self)
+            self.loginButton.setIcon(QIcon("girisYap.png"))
+            self.loginButton.setGeometry(150, 350, 120, 40)
+            self.loginButton.clicked.connect(self.girisYap)
+            
+            self.signUpButton = QPushButton("Kayıt ol", self)
+            self.signUpButton.setIcon(QIcon("kayitOL.png"))
+            self.signUpButton.setGeometry(300, 350, 120, 40)
+            self.signUpButton.clicked.connect(self.kayitOl)
+            
+            self.layout.addWidget(self.loginButton)
+            self.layout.addWidget(self.signUpButton)
+            self.central_widget.setLayout(self.layout)
+            self.setCentralWidget(self.central_widget)
         
     def girisYap(self):
         try:
-            self.girisPenceresi = girisPenceresi()
+            self.girisPenceresi = girisPenceresi(self)  # Ayrı bir pencere olarak
             self.girisPenceresi.show()
         except Exception as e:
             print(e)
     
     def kayitOl(self):
         try:
-            self.kayitPencresi = kayitPencresi()
-            self.kayitPencresi.show()
+            self.kayitPenceresi = kayitPenceresi(self)  # Ayrı bir pencere olarak
+            self.kayitPenceresi.show()
         except Exception as e:
             print(e)
         
@@ -258,17 +236,15 @@ class AetherAIApp(QMainWindow): # Main class
         if self.centralWidget():
             self.centralWidget().deleteLater()
         
-        self.main_widget = QWidget()
+        self.main_widget = QWidget(self)
         self.layout = QVBoxLayout()
         
         self.cpu_button = QPushButton("CPU Kontrolü", self)
-        self.cpu_button.setIcon(QIcon())
         self.cpu_button.setGeometry(100, 100, 100, 50)
         self.cpu_button.clicked.connect(self.cpu_kontrolü)
         
-        self.ram_button = QPushButton("RAM Kontolü", self)
-        self.ram_button.setIcon(QIcon())
-        self.ram_button.setGeometry(100, 100, 100, 50)
+        self.ram_button = QPushButton("RAM Kontrolü", self)
+        self.ram_button.setGeometry(200, 100, 100, 50)
         self.ram_button.clicked.connect(self.ram_kontrolü)
         
         self.layout.addWidget(self.cpu_button)
@@ -277,6 +253,10 @@ class AetherAIApp(QMainWindow): # Main class
         self.main_widget.setLayout(self.layout)
         self.setCentralWidget(self.main_widget)
         
+    def setAuthenticated(self, value):
+        self.isAuthenticated = value
+        self.initUI()  # Bayrak değiştiğinde arayüzü yeniden yükle
+
     def cpu_kontrolü(self):
         self.kontrolEtCPU = controlOfCPU()
         self.kontrolEtCPU.show()
@@ -288,7 +268,7 @@ class AetherAIApp(QMainWindow): # Main class
 def ilkKullaniciyiEkle():
     isim = "Muhammet"
     soyisim = "Kaya"
-    eposta = "owdhklawj@uweıo"
+    eposta = "muham123cak@gmail.com"
     satir = f"{isim},{soyisim},{eposta}\n"
     
     try:
