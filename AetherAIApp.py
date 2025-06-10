@@ -1,10 +1,16 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Jun  7 06:10:08 2025
+
+@author: pikac
+"""
 # Gerekli kütüphaneler
 import psutil
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QLabel, QMessageBox,
     QFrame, QLineEdit, QPushButton, QWidget,
-    QVBoxLayout, QProgressBar
+    QVBoxLayout, QProgressBar, QStackedWidget
     )
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QTimer
@@ -113,6 +119,7 @@ class girisPenceresi(QWidget):
         self.button = QPushButton("Giriş", self)
         self.button.setGeometry(200, 300, 300, 60)
         self.button.clicked.connect(self.girisDogulama)
+        self.button.clicked.connect(lambda: self.index)
         
         self.setLayout(layout)
         
@@ -196,6 +203,7 @@ class kayitPencresi(QWidget):
         self.button = QPushButton("Kayıt ol", self)
         self.button.setGeometry()
         self.button.clicked.connect(self.kayitDogrulama)
+        self.button.clicked.connect(lambda: self.index) #
         
     def kayitDogrulama(self):
         eposta = self.inpt_eposta.text()
@@ -224,6 +232,9 @@ class AetherAIApp(QMainWindow): # Main class
     def initUI(self):
         self.central_widget = QWidget(self)
         self.layout = QVBoxLayout()
+        
+        self.stacked_widget = QStackedWidget() #
+        self.setCentralWidget(self.stacked_widget) #
         
         self.loginButton = QPushButton("Giriş yap", self)
         self.loginButton.setIcon(QIcon("girisYap.png"))
@@ -257,6 +268,8 @@ class AetherAIApp(QMainWindow): # Main class
     def appMain(self):
         if self.centralWidget():
             self.centralWidget().deleteLater()
+            
+        self.index = self.stacked_widget.setCurrentIndex(1) #
         
         self.main_widget = QWidget()
         self.layout = QVBoxLayout()
@@ -288,7 +301,7 @@ class AetherAIApp(QMainWindow): # Main class
 def ilkKullaniciyiEkle():
     isim = "Muhammet"
     soyisim = "Kaya"
-    eposta = "owdhklawj@uweıo"
+    eposta = "whqlhwlo@whoeş"
     satir = f"{isim},{soyisim},{eposta}\n"
     
     try:
@@ -312,3 +325,4 @@ def openWindow():
 
 ilkKullaniciyiEkle()
 openWindow()
+
